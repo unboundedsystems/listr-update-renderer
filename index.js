@@ -49,13 +49,22 @@ const render = (tasks, options) => {
 };
 
 class UpdateRenderer {
-	constructor(tasks, options) {
+	constructor(tasks, options, listr) {
 		this._tasks = tasks;
 		this._options = Object.assign({
 			showSubtasks: true,
 			collapse: true,
 			clearOutput: false
 		}, options);
+
+		// Older versions of Listr don't provide the listr instance
+		if (listr) {
+			listr.subscribe(event => {
+				if (event.type === 'ADDTASK') {
+					this._tasks.push(event.data);
+				}
+			});
+		}
 	}
 
 	render() {
